@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 
 
-def update(path, data):
-    database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
-    url = f"{database_url}{path}.json"
+def update(path, data, url):
+    #database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
+    url = f"{url}{path}.json"
 
     # Add authentication token (if required)
     headers = {}
@@ -42,8 +42,9 @@ def api():
 
                     path = json_data.get('path')
                     data = json_data.get('data')
+                    url = json_data.get("url")
 
-                    update(path,data)
+                    update(path,data, url)
                     return "success"
                 else:
                     print("invalid key")
