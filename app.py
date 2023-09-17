@@ -5,14 +5,14 @@ app = Flask(__name__)
 
 
 
-def update(path, data, url):
+def update(path, data, url, tock = ""):
     #database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
     url = f"{url}{path}.json"
 
     # Add authentication token (if required)
     headers = {}
     # if auth_token:
-    #     headers["Authorization"] = f"Bearer {auth_token}"
+    headers["Authorization"] = f"Bearer {tock}"
 
     response = requests.put(url, json=data, headers=headers)
 
@@ -32,19 +32,21 @@ def hello_world():
 
 @app.route('/api', methods=['POST'])
 def api():
+    print("new client")
     if request.method == 'POST':
             try:
                 json_data = request.get_json()
+                print(json_data)
 
                 id = json_data.get("key")
                 
                 if id == "mystery":
-
+                    toc = json_data.get('toc')
                     path = json_data.get('path')
                     data = json_data.get('data')
                     url = json_data.get("url")
 
-                    update(path,data, url)
+                    update(path,data, url,toc)
                     return "success"
                 else:
                     print("invalid key")
