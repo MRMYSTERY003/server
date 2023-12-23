@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify
-import requests 
+import requests
 import json
 
 app = Flask(__name__)
 
 
-
-def update(path, data, url, tock = ""):
-    #database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
+def update(path, data, url, tock=""):
+    # database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
     url = f"{url}{path}.json"
 
     # Add authentication token (if required)
@@ -24,19 +23,23 @@ def update(path, data, url, tock = ""):
         print(f"Failed to update data. Status code: {response.status_code}")
         return f"Failed to update data. Status code: {response.status_code}"
 
+
 def getapi():
     database_url = "https://dummy-a8c5d-default-rtdb.firebaseio.com/"
     url = f"{database_url}APIKEYS/.json"
     res = requests.get(url).text
     json_data = json.loads(res)
     return json_data
-     
+
+
 def getdata(path):
     try:
         database_url = "https://dummy-a8c5d-default-rtdb.firebaseio.com/"
         url = f"{database_url}{path}.json"
+
         res = requests.get(url).text
-        if res != 'null':
+        print(res)
+        if res != "null":
             json_data = json.loads(res)
             return json_data
         else:
@@ -46,68 +49,69 @@ def getdata(path):
         return "some error occured!!"
 
 
-
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
 
 
-@app.route('/api', methods=['POST'])
+@app.route("/api", methods=["POST"])
 def api():
     print("new client")
-    if request.method == 'POST':
-            try:
-                json_data = request.get_json()
-                print(json_data)
-
-                id = json_data.get("key")
-                
-                if id == "mystery":
-                    toc = json_data.get('toc')
-                    path = json_data.get('path')
-                    data = json_data.get('data')
-                    url = json_data.get("url")
-
-                    update(path,data, url,toc)
-                    return "success"
-                else:
-                    print("invalid key")
-                    return "invalid key"
-
-
-            except Exception as e:
-                return jsonify({'error': 'Invalid JSON data'}), 400
-
-@app.route('/fetch', methods=['POST'])
-def fetch():
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             json_data = request.get_json()
-            id = json_data.get("id")
-            vec_id = json_data.get("vechicle_id")
-            key = json_data.get("key")
-            data_type = json_data.get("data")
-            all_keys = getapi()
-            print(key, all_keys[id])
+            print(json_data)
 
-            if str(key) == str(all_keys[id]):
-                print("authendicated")
-                if data_type == "all":
-                    return getdata("/VECHICLES/")
-                elif data_type == "single":
-                    return getdata("/VECHICLES/"+vec_id)
-            
+            id = json_data.get("key")
+
+            if id == "mystery":
+                toc = json_data.get("toc")
+                path = json_data.get("path")
+                data = json_data.get("data")
+                url = json_data.get("url")
+
+                update(path, data, url, toc)
                 return "success"
             else:
                 print("invalid key")
                 return "invalid key"
 
+        except Exception as e:
+            return jsonify({"error": "Invalid JSON data"}), 400
+
+
+@app.route("/fetch", methods=["POST"])
+def fetch():
+    if request.method == "POST":
+        try:
+            json_data = request.get_json()
+            print(json_data)
+            id = json_data.get("id")
+            vec_id = json_data.get("vechicle_id")
+            key = json_data.get("key")
+            data_type = json_data.get("data")
+            all_keys = getapi()
+            print(all_keys)
+            print(key, all_keys[id])
+
+            if str(key) == str(all_keys[id]):
+                print("authendicated")
+                if data_type == "all":
+                    return getdata("/NEW_VEHICLES/")
+                elif data_type == "single":
+                    return getdata("/NEW_VEHICLES/" + vec_id)
+
+                return "success"
+            else:
+                print("invalid key")
+                return "invalid key"
 
         except Exception as e:
-            return jsonify({'error': 'Invalid JSON data'}), 400
+            return jsonify({"error": "Invalid JSON data", "e": e}), 400
 
     # res = update("test",{"key":1})
 
 
-if __name__ == '__main__':
-    app.run(debug=False, host="0.0.0.0")
+if __name__ == "__main__":
+    # app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True)
