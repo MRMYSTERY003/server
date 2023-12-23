@@ -25,7 +25,7 @@ def update(path, data, url, tock = ""):
         return f"Failed to update data. Status code: {response.status_code}"
 
 def getapi():
-    database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
+    database_url = "https://dummy-a8c5d-default-rtdb.firebaseio.com/"
     url = f"{database_url}APIKEYS/.json"
     res = requests.get(url).text
     json_data = json.loads(res)
@@ -33,7 +33,7 @@ def getapi():
      
 def getdata(path):
     try:
-        database_url = "https://motorwaymavericks-23929-default-rtdb.firebaseio.com/"
+        database_url = "https://dummy-a8c5d-default-rtdb.firebaseio.com/"
         url = f"{database_url}{path}.json"
         res = requests.get(url).text
         if res != 'null':
